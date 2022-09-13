@@ -1,0 +1,21 @@
+/*CSS 1*/
+.cuerpoPagina{
+    background-size: cover;
+    background-image:url("../images/imagenLanding.png");
+
+}
+
+
+#piePagina{
+    margin-top: 1in;
+    width: 13in;
+    margin-left: 19px;
+    background-color: rgba(248, 248, 248, 0.548) ;
+}
+
+#tablaGeneral{
+    margin-top: 2in;
+    margin-left: 20px;
+    width: 13in;
+    
+}

@@ -1,0 +1,19 @@
+/*CSS altaBajaCliente*/
+#cuerpoAltaBaja{
+    background-image: url("../images/imagenLanding.png");
+    background-size: cover;
+}
+
+#piePagina{
+    margin-top: 1in;
+    width: 13in;
+    margin-left: 19px;
+    background-color: rgba(98, 145, 247, 0.37) ;
+}
+
+#tablaClientes{
+   
+    margin-left: 20px;
+    width: 13in;
+    text-align: center;
+}

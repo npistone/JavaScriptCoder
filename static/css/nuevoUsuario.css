@@ -1,0 +1,30 @@
+/*nuevo Cliente*/
+
+#cuerpoPagina{
+    background-image: url("../images/imagenLanding.png");
+  
+   
+
+}
+
+#piePagina{
+    margin-top: 2in;
+    width: 13in;
+    margin-left: 19px;
+    background-color: rgba(98, 145, 247, 0.37) ;
+}
+
+.form-register{
+    width: 400px;   
+    padding: 30px;
+    margin: auto;
+    margin-top: 100px;
+    background-color:rgba(240, 248, 255, 0.781);
+    border-radius: 4px; 
+}
+
+.form-control{
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 4px blue;
+}

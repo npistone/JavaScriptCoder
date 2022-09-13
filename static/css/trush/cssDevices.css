@@ -1,0 +1,21 @@
+/* CSS devices*/
+table {
+    counter-reset: rowNumber;
+  }
+  
+  table tr {
+    counter-increment: rowNumber;
+  }
+  
+  table tr td:first-child::before {
+    content: counter(rowNumber);
+    min-width: 10em;
+    margin-right: 1.5em;
+  }
+
+#barra{
+  background-color: black;
+}
+#container{
+  background-color: brown;
+}
