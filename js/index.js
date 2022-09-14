@@ -76,7 +76,7 @@ function agregarProducto(productos) {
                 index = -1
                 break
             }
-            let existeProducto = productos.some((producto) => producto.nombre === nombre)
+            let existeProducto = productos.some((producto) => producto.nombre === nombre.toLowerCase)
             if(existeProducto){
                 alert("Ya hay un producto registrado con ese nombre");
                 index = -1
@@ -106,7 +106,21 @@ function mostrarStock(productos) {
 }
 
 function buscarProducto(productos){
-
+    let productoABuscar = prompt("Ingrese el nombre de producto a buscar").toLowerCase()
+    let validado =validarString(productoABuscar)
+    if(validado){
+        alert("El valor ingresado no es valido")
+    }else{
+        let buscarPorNombre = productos.filter((producto)=> producto.nombre ===productoABuscar)
+        if(buscarPorNombre.length == 0){
+            alert("No se encontro ningun producto con ese nombre")
+        }else{
+            for (const producto of buscarPorNombre) {
+                alert(producto.id + "- " + producto.nombre.toUpperCase() + " [stock: " + producto.cantidad + "]"+" Precio de venta : $" +producto.precioVenta)
+            }
+        }
+    }
+    
 }
 
 
@@ -135,6 +149,7 @@ function main() {
                 }
                 break;
             case 3:
+                buscarProducto(productos)
                 break;
             default:
                 break;
