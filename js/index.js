@@ -1,83 +1,147 @@
-
-
-function ingresoCantidad() {
-
-    let cantidad
-    do {
-        cantidad = prompt("Ingrese la cantidad de productos")
-        cantidad = parseInt(cantidad)
-        console.log(cantidad);
-        if(cantidad<1 || cantidad ==NaN){
-            alert("La cantidad de productos no puede ser menor a 1")
-        }
-    } while (cantidad<1 || cantidad ==NaN);
-
-    return cantidad;
-}
-
-
-function calculoPago(cantidad){
-    let precio
-    do{
-        precio=prompt("Ingrese el costo del producto")
-        precio=parseFloat(precio)
-
-        if(precio ==NaN || precio <1){
-            alert("El precio ingresado es invalido, ingrese nuevamente el valor")
-        }
-    }while(precio ==NaN || precio <1)
-
-    let pago = precio * cantidad;
-    return pago
-}
-
-function formaDePago(aPagar){
-
-alert ("El monto total a pagar es $"+aPagar)    
-let formaPago
-do {
-    formaPago = prompt("Elija una forma de pago " + "\n" + "1- Efectivo \n 2- Ahora 3 \n 3- Ahora 6")
-    if(formaPago == NaN){
-        alert("Debe seleccionar una opcion valida")
-    }else{
-        formaPago = parseInt(formaPago)
+class Producto {
+    constructor(id, nombre, precioCompra, precioVenta, cantidad) {
+        this.id = id;
+        this.nombre = nombre.toLowerCase();
+        this.precioCompra = precioCompra;
+        this.precioVenta = precioVenta;
+        this.cantidad = cantidad;
     }
-    
-} while (formaPago < 1 || formaPago > 3 )
-let cuotas
-switch (formaPago) {
-    case 1:
-        alert("Total :$" + aPagar)
-        break;
-    case 2:
-        cuotas = aPagar / 3
-        alert("Total : 3 cuotas de $" + cuotas.toFixed(2))
-        break;
-    case 3:
-        cuotas = aPagar / 6
-        alert("Total : 6 cuotas de $" + cuotas.toFixed(2))
-        break;
-    default:
-        break;
-}
+
 }
 
-function main(){
-    let total = 0
-    let respuesta = "n"
-    do{
-        let cant = ingresoCantidad();
-        let parcial = calculoPago(cant)
-        total=total+parcial
+function validarString(palabra, bandera) {
+    if (palabra === '' || palabra === null) {
+        bandera = true;
+    } else {
+        bandera = false
+    }
+    return bandera
+}
 
-        respuesta = prompt("Desea agregar otro producto? \n Presione 'Si' para agregar productos \n No para continuar ")
-        console.log(respuesta);
-    }while(respuesta.toLowerCase() == "si")
+function validarNumero(numero, bandera) {
+    if (numero == 0 || isNaN(numero)) {
+        bandera = true
+    } else {
+        bandera = false
+    }
+    return bandera
+}
 
-    formaDePago(total);
+function agregarProducto(productos) {
 
-    alert("¡Muchas gracias por su compra!")
+    let numeroProductos = parseInt(
+        prompt("Cuantos productos se van a registar")
+    );
 
+    for (let index = 0; index < numeroProductos; index++) {
+
+        let bandera = false;
+        let id;
+        let nombre;
+        let precioVenta;
+        let precioCompra;
+        let cantidad;
+
+        do {
+            id = productos.length + 1;
+            nombre = prompt("Ingrese nombre")
+            bandera = validarString(nombre)
+
+            if (bandera) {
+                alert("•Valor ingresado invalido. \n•Cargue nuevamente el producto")
+                index = -1
+                break
+            }
+
+            precioCompra = parseFloat(prompt("Ingrese el precio compra"))
+            bandera = validarNumero(precioCompra)
+            if (bandera) {
+                alert("•Valor ingresado invalido. \n•Cargue nuevamente el producto")
+                index = -1
+                break
+            }
+
+            precioVenta = parseFloat(prompt("Ingrese el precio venta"))
+            bandera = validarNumero(precioVenta)
+            if (bandera) {
+                alert("•Valor ingresado invalido. \n•Cargue nuevamente el producto")
+                index = -1
+                break
+            }
+
+            cantidad = parseInt(prompt("Ingrese la cantidad"))
+            bandera = validarNumero(cantidad)
+            if (bandera) {
+                alert("•Valor ingresado invalido. \n•Cargue nuevamente el producto")
+                index = -1
+                break
+            }
+            let existeProducto = productos.some((producto) => producto.nombre === nombre)
+            if(existeProducto){
+                alert("Ya hay un producto registrado con ese nombre");
+                index = -1
+                break
+            }
+
+            let productoARegistrar = new Producto(id, nombre, precioCompra, precioVenta, cantidad);
+
+            productos.push(productoARegistrar)
+
+            alert("-Producto registrado-")
+
+        } while (bandera)
+
+
+
+    }
+
+    return productos
+}
+
+function mostrarStock(productos) {
+    for (let producto of productos) {
+
+        alert(producto.id + "- " + producto.nombre.toUpperCase() + " [stock: " + producto.cantidad + "]")
+    }
+}
+
+function buscarProducto(productos){
+
+}
+
+
+function main() {
+    let opcion = 0
+    let productos = []
+    let producto1 = new Producto(1, "lapiz", 10, 20, 10)
+    let producto2 = new Producto(2, "lapicera", 20, 25, 5)
+    let producto3 = new Producto(3, "goma", 10, 12, 8)
+    productos.push(producto1, producto2, producto3);
+    do {
+        do {
+            opcion = parseInt(prompt("  ====  MENU  ==== \n 1- Carga de productos \n 2- Mostrar stock \n 3- Buscar producto \n 4- Salir"))
+
+        } while (opcion > 4 || opcion < 1 || opcion == NaN)
+
+        switch (opcion) {
+            case 1:
+                productos = agregarProducto(productos)
+                break;
+            case 2:
+                if (productos.length < 1) {
+                    alert("No hay productos registrados")
+                } else {
+                    mostrarStock(productos)
+                }
+                break;
+            case 3:
+                break;
+            default:
+                break;
+        }
+    } while (opcion != 4)
+
+    alert("System down")
 }
 
 main()
