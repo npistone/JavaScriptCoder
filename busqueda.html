@@ -8,13 +8,10 @@
     <link rel="Stylesheet" href="static/css/allConfig.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <title>End Point Tienda Digital</title>
-
+    <title>Searcher</title>
 </head>
 
 <body id="cuerpo">
-
     <nav id="barra" class="navbar fixed-top navbar-expand-lg navbar-light "
         style="background-color:rgba(0, 140, 255, 0.918);">
         <div class="container-fluid img-responsive">
@@ -31,7 +28,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav  ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="">Home</a>
+                        <a class="nav-link active" aria-current="page" href="index.html">Home</a>
                     </li>
 
 
@@ -45,8 +42,7 @@
                             Sing in
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="clienteUsuario.html">Login</a></li>
-                            <li><a class="dropdown-item" href="nuevoCliente.html">New User</a></li>
+                            <li><a class="dropdown-item" href="registroUsuario.html">New User</a></li>
 
                         </ul>
                     </li>
@@ -59,73 +55,51 @@
             </div>
         </div>
     </nav>
-
     <section class="titleList">
         <div class="container text-center">
-            <div class="row justify-content-center mt-5">
-
-                <h2>Sistema de Stock</h2>
-
+            <div class="row justify-content-center">
+                <div class="col-md-6 mt-5 pt-3">
+                    <h2>Buscador productos</h2>
+                </div>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <div class="col-md-3">
-                <h3 class="text-center">Carga de productos</h3>
-                <form id="formularioCarga">
+        <div class="container-fluid ">
+            <div class="row  align-items-start">
+                <div class="col-sm-6 text-center">
+                    <h4>Precio</h4>
+                    <form id="busquedaPrecio">
+                        <input id="precioMin" class="form-control" type="number" placeholder="Precio minimo" min=0
+                            required>
+                        <input id="precioMax" class="form-control" type="number" placeholder="Precio máximo" required>
+                        <button type="reset" class="btn btn-danger">Limpiar</button>
+                        <button type="submit" class="btn btn-success">Buscar</button>
 
-                    <div class="mb-3 align-text-left">
-                        <label class="form-label ">Nombre</label>
-                        <input type="text" class="form-control" id="inputName"
-                            placeholder="Ingrese el nombre del producto" required>
-                    </div>
+                    </form>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Costo</label>
-                        <input type="number" class="form-control" id="inputCosto"
-                            placeholder="Ingrese el precio de costo del producto" min=1 required />
-                    </div>
+                <div class="col-sm-6 text-center">
+                    <h4>Nombre</h4>
+                    <form id="busquedaNombre">
+                        <input id="nombreABuscar" class="form-control" type="text" placeholder="Nombre" required>
+                        <button type="reset" class="btn btn-danger">Limpiar</button>
+                        <button type="submit" class="btn btn-success">Buscar</button>
 
-                    <div class="mb-3">
-                        <label class="form-label">Venta</label>
-                        <input type="number" class="form-control" id="inputVenta"
-                            placeholder="Ingrese el precio de Venta del producto" min=1 required />
-                    </div>
+                    </form>
+                </div>
+            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Cantidad</label>
-                        <input type="number" class="form-control" id="inputCantidad" placeholder="Cantidad ingresada"
-                            required />
-                    </div>
+        </div>
+        <div class="stock">
+            <div class="container mb-5 py-0">
+                <div class="row mb-5 align-items-center" id="muestra_Resultado">
 
-                    <div class="mb-3 text-left">
-                        <label class="form-label">Descripcion producto</label>
-                        <textarea class="form-control" id="inputDescripcion" rows="3"></textarea>
 
-                    </div>
-                    <div class="mb-3 text-center">
-                        <button type="submit" class="btn btn-primary">Registrar</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-
-
     </section>
-    <div class="container">
-        <div class="row justify-content-center text-center" id="resultado__Carga">
 
-        </div>
-    </div>
-
-    <div class="stock">
-        <div class="container mb-5 py-0">
-            <div class="row mb-5" id="muestra__Stock">
-
-
-            </div>
-        </div>
-    </div>
-    <footer class="d-flex flex-wrap justify-content-between align-items-center mt-5 border-top ">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center mt-5 border-top fixed-bottom">
         <div class="col-md-4 d-flex align-items-center">
             <span class="text-muted">© 2022 End Point ◉ </span>
         </div>
@@ -138,16 +112,13 @@
         </ul>
     </footer>
 
+    <!-- JavaScript Bundle with Popper -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
         crossorigin="anonymous"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script src="js/addStock.js"></script>
-
-
+    <script src="/js/findProduct.js"></script>
 </body>
-
-
 
 </html>

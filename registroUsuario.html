@@ -31,7 +31,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav  ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="">Home</a>
+                        <a class="nav-link active" aria-current="page" href="index.html">Home</a>
                     </li>
 
 
@@ -45,8 +45,7 @@
                             Sing in
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="clienteUsuario.html">Login</a></li>
-                            <li><a class="dropdown-item" href="nuevoCliente.html">New User</a></li>
+                            <li><a class="dropdown-item" href="registroUsuario.html">New User</a></li>
 
                         </ul>
                     </li>
@@ -64,68 +63,47 @@
         <div class="container text-center">
             <div class="row justify-content-center mt-5">
 
-                <h2>Sistema de Stock</h2>
+                <h2>Alta de Usuarios</h2>
 
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-3">
-                <h3 class="text-center">Carga de productos</h3>
-                <form id="formularioCarga">
+
+                <form id="formularioUsuario">
 
                     <div class="mb-3 align-text-left">
                         <label class="form-label ">Nombre</label>
-                        <input type="text" class="form-control" id="inputName"
-                            placeholder="Ingrese el nombre del producto" required>
+                        <input type="text" class="form-control" id="userName"
+                            placeholder="Nombre" required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Costo</label>
-                        <input type="number" class="form-control" id="inputCosto"
-                            placeholder="Ingrese el precio de costo del producto" min=1 required />
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="userMail"
+                            placeholder="mail@mail.com" required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Venta</label>
-                        <input type="number" class="form-control" id="inputVenta"
-                            placeholder="Ingrese el precio de Venta del producto" min=1 required />
+                        <label class="form-label">Telefono</label>
+                        <input type="number" class="form-control" id="userPhone"
+                            placeholder="261999000"  required />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Cantidad</label>
-                        <input type="number" class="form-control" id="inputCantidad" placeholder="Cantidad ingresada"
-                            required />
+                        <label class="form-label">password</label>
+                        <input type="password" class="form-control" id="userPassword" placeholder="Password"
+                         pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required />
                     </div>
 
-                    <div class="mb-3 text-left">
-                        <label class="form-label">Descripcion producto</label>
-                        <textarea class="form-control" id="inputDescripcion" rows="3"></textarea>
-
-                    </div>
                     <div class="mb-3 text-center">
-                        <button type="submit" class="btn btn-primary">Registrar</button>
+                        <button type="reset" class="btn btn-danger">Reset</button>
+                        <button type="submit" class="btn btn-primary">Registrarse</button>
                     </div>
                 </form>
             </div>
         </div>
-
-
-    </section>
-    <div class="container">
-        <div class="row justify-content-center text-center" id="resultado__Carga">
-
-        </div>
-    </div>
-
-    <div class="stock">
-        <div class="container mb-5 py-0">
-            <div class="row mb-5" id="muestra__Stock">
-
-
-            </div>
-        </div>
-    </div>
-    <footer class="d-flex flex-wrap justify-content-between align-items-center mt-5 border-top ">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center mt-5 border-top ">
         <div class="col-md-4 d-flex align-items-center">
             <span class="text-muted">© 2022 End Point ◉ </span>
         </div>
