@@ -17,4 +17,7 @@ class usuario{
         this.password = password;
 
     }
+
+    updatePassword = (newPassword) => this.password = newPassword;
+    
 }

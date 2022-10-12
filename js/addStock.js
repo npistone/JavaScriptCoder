@@ -6,32 +6,7 @@ let inVenta;
 let inCosto;
 let inCantidad;
 let inDescripcion;
-let productos = [
-    {
-        id: 1,
-        nombre: "lapiz",
-        precioCompra: 100,
-        precioVenta: 130,
-        cantidad: 20,
-        descripcion: "Appen 15"
-    },
-    {
-        id: 2,
-        nombre: "lapicera",
-        precioCompra: 140,
-        precioVenta: 170,
-        cantidad: 12,
-        descripcion: "Bic traso grueso"
-    },
-    {
-        id: 3,
-        nombre: "goma",
-        precioCompra: 50,
-        precioVenta: 90,
-        cantidad: 5,
-        descripcion: "Doble top"
-    }
-];
+let productos = [];
 let formularioCarga;
 let muestraStock;
 
@@ -281,14 +256,25 @@ function buscarProducto(productos) {
     }
 
 }
+async function consultaApi() {
+
+    try {
+        const response = await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")//El await hace que espere hasta que llegue esa respuesta
+        const data = await response.json();
+        productos = [...data]
+        mostrarStock();
+    } catch (error) {
+        
+    }
+}
 
 
 function main() {
 
     initElementos(); //Se inicializan los elementos
     initAccion();//La acciones con la que vamos a manipular lo elementos
-    agregarProductoStorage();
-    getProductosStorage();// Buscamos en el storage los elementos guardados y si estan generamos las cards
+    consultaApi();
+   // getProductosStorage();// Buscamos en el storage los elementos guardados y si estan generamos las cards
 
 }
 
