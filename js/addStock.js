@@ -9,12 +9,13 @@ let inDescripcion;
 let productos = [];
 let formularioCarga;
 let muestraStock;
-
+const error = "error";
+const success = "success";
 
 class Producto {
     constructor(id, nombre, precioCompra, precioVenta, cantidad, descripcion) {
         this.id = id;
-        this.nombre = nombre.toLowerCase();
+        this.nombre = nombre;
         this.precioCompra = precioCompra;
         this.precioVenta = precioVenta;
         this.cantidad = cantidad;
@@ -44,6 +45,9 @@ function initElementos() {
     muestraStock = document.getElementById("muestra__Stock")
 }
 
+function initAccion() {
+    formularioCarga.onsubmit = (evento) => agregarProducto(evento)
+}
 
 function validarString(palabra) {
     let bandera = false
@@ -64,9 +68,7 @@ function validarNumero(numero) {
     return bandera
 }
 
-function initAccion() {
-    formularioCarga.onsubmit = (evento) => agregarProducto(evento)
-}
+
 
 
 function validacionProducto(nombre, costo, venta, cantidad) {
@@ -114,11 +116,11 @@ function agregarProducto(evento) {
 
     if (productoValidado > 0) {
         let mensaje = "Datos ingresados invalidos vuelva a cargar el producto"
-        generarAlertError(mensaje, "error");
+        generarAlertError(mensaje, error);
 
     } else if (existeProducto) {
         let mensaje = "Ya existe un producto registrado con ese nombre"
-        generarAlertError(mensaje, "error");
+        generarAlertError(mensaje, error);
 
     } else {
         if (descripcion == null || descripcion == "") {
@@ -126,44 +128,29 @@ function agregarProducto(evento) {
         }
 
         let productoARegistrar = new Producto(id, nombre, precioCompra, precioVenta, cantidad, descripcion);
+        let tranformarJson = JSON.stringify(productoARegistrar);    
+        addProductApi(tranformarJson);
 
-        productos.push(productoARegistrar)
-
-        agregarProductoStorage();
-        let mensaje = "Producto ingresado correctamente"
-        generarAlertError(mensaje, "success");
     }
 
 
     formularioCarga.reset()
     mostrarStock()
 
-    return productos
-}
-
-function agregarProductoStorage() {
-    let productosJSON = JSON.stringify(productos)
-    localStorage.setItem("productos", productosJSON)
 
 }
 
-function getProductosStorage() {
-
-    let productosJSON = localStorage.getItem("productos")//Buscamos en localStorage si hay productos guardados
-    if (productosJSON) {
-        productos = JSON.parse(productosJSON)
-        mostrarStock()
-    }
-}
-function clearLocalStorage() {
-    localStorage.clear;
-}
 
 function mostrarStock() {
-
+    const product = []
+    for (let index = 0; index < productos.length; index++) {
+        const product = ;
+        
+    }
     muestraStock.innerHTML = "";
 
     productos.forEach((producto) => {
+        console.log(producto.nombre);
         let column = document.createElement("div");
         column.className = "col-md-4 mt-3 ";
         column.id = `columna-${producto.id}`;
@@ -183,7 +170,7 @@ function mostrarStock() {
         </div>
         
       </div>`;
-
+        console.log("deberia mostrar");
         muestraStock.append(column);
         let eliminarCard = document.getElementById(`eliminarCard-${producto.id}`)
         eliminarCard.onclick = () => confirmarEliminacion(producto.id)
@@ -257,24 +244,49 @@ function buscarProducto(productos) {
 
 }
 async function consultaApi() {
+    let product = [];
 
     try {
         const response = await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")//El await hace que espere hasta que llegue esa respuesta
         const data = await response.json();
-        productos = [...data]
-        mostrarStock();
-    } catch (error) {
         
+       
+        productos= [...data]
+        console.log(productos);
+       
+    } catch (errorApi) {
+        generarAlertError(errorApi, error);
+        console.log(errorApi);
     }
 }
 
+async function addProductApi(productJson){
+    try {
+        const response = await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto",
+        {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: productJson
+          })//El await hace que espere hasta que llegue esa respuesta
+        if(response.ok){
+            generarAlertError("Producto agregado exitosamente", success)
+        }
+        
+    } catch (errorApi) {
+        generarAlertError(errorApi, error);
+    }
+
+
+} 
 
 function main() {
 
     initElementos(); //Se inicializan los elementos
     initAccion();//La acciones con la que vamos a manipular lo elementos
     consultaApi();
-   // getProductosStorage();// Buscamos en el storage los elementos guardados y si estan generamos las cards
+   mostrarStock();
 
 }
 
