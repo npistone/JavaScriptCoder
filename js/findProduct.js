@@ -4,6 +4,7 @@ let nombreABuscar;
 let muestraResultado;
 let formPrecios;
 let formNombre;
+let products = {}
 
 
 
@@ -63,9 +64,15 @@ function mostrarProductos(productos) {
                 <h5 class="card-title"> Precio de costo : ${producto.precioCompra} <br> Descripcion :${producto.descripcion}
                 <br> #IdProduct : ${producto.id} 
                 </h5> 
-            <div class="align-items-center">       
-            <button type="button" class="btn btn-outline-danger btn-sm" id="eliminarCard-${producto.id}">Eliminar</button>
-            </div>              
+            <form class="addCarrito">
+                <div class="mb-2">
+                    <label class="form-label">Cantidad</label>
+                     <input type="number" class="form-control form-control-sm" id="addQuantity" required />
+                 </div>
+                 <input type="hidden" id="addProductId" name="articuloId" value=${producto.id}  />
+                <button type="submit" class="btn btn-outline-danger btn-sm">Agregar al carrito</button>
+                  
+            </form>              
         </div>
         
       </div>`;
@@ -76,7 +83,7 @@ function mostrarProductos(productos) {
 
 }
 
-function buscarPorPrecios(evento) {
+async function buscarPorPrecios(evento) {
     evento.preventDefault();
     let minimo = precioMin.value;
     let maximo = precioMax.value;
@@ -85,7 +92,7 @@ function buscarPorPrecios(evento) {
     let resultado = [];
 
     if (validacion) {
-        productosStorage = getProductosStorage();
+        productosStorage = consultaApi();
 
         if (productosStorage.length > 0) {
             resultado = productosStorage.filter((producto) => producto.precioVenta <= maximo && producto.precioVenta >= minimo);
@@ -116,32 +123,21 @@ function buscarPorPrecios(evento) {
     formPrecios.reset();
 }
 
-function buscarPorNombre(eventoX) {
+async function buscarPorNombre(eventoX) {
     console.log("entra");
     eventoX.preventDefault();
     let nombreBuscado = nombreABuscar.value;
-    let productosStorage;
     let resultado = [];
 
     if (validarString(nombreBuscado)) {
-        productosStorage = getProductosStorage();
-        console.log("busca storage");
-
-        if (productosStorage.length > 0) {
+       console.log(products);
+        if (products.length > 0) {
             console.log("filtra");
-            resultado = productosStorage.filter((producto) => producto.nombre == nombreBuscado);
+            resultado = products.filter((producto) => producto.nombre == nombreBuscado);
             if (resultado.length > 0) {
                 mostrarProductos(resultado);
             } else {
-                console.log("no encuentra producto");
-                muestraResultado.innerHTML = "";
-                let column = document.createElement("div");
-                column.className = "col-md-3 mt-3 text-center";
-                column.innerHTML = `
-                <div class="mb-3">
-                <p class="text-danger fs-4"> No existen con el nombre ingresado</p>
-                </div>`;
-                muestraResultado.append(column);
+                generarAlertError("No se encontraron productos con ese nombre", "error")
             }
         }
     } else {
@@ -157,8 +153,40 @@ function buscarPorNombre(eventoX) {
     formNombre.reset();
 }
 
+async function consultaApi() {
+    fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")
+    .then((res) => res.json())
+    .then((productosResponse) => {
+        products = productosResponse
+        console.log(products);
+    })
+    .catch( err => generarAlertError(err, error))
+};
+
+function generarAlertError(mensaje, tipo) {
+
+    tipo =="error" &&
+     (tipo == "error") 
+        Swal.fire({
+            icon: "error",
+            title: mensaje,
+            width: "25%",
+            time : 1500
+        });
+    
+     tipo =="success" &&   
+        Swal.fire({
+            icon: "success",
+            title: mensaje,
+            width: "25%",
+            time : 1500
+        })
+
+    
+}
 function main() {
     initEventos();
     initAcciones();
+    consultaApi();
 }
 main()

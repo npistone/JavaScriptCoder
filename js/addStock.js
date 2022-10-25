@@ -6,7 +6,7 @@ let inVenta;
 let inCosto;
 let inCantidad;
 let inDescripcion;
-let productos = [];
+let products = {};
 let formularioCarga;
 let muestraStock;
 const error = "error";
@@ -92,6 +92,10 @@ function validacionProducto(nombre, costo, venta, cantidad) {
         bandera = false
     }
 
+    if(costo>venta){
+        validacion++
+    }
+
     bandera = validarNumero(cantidad)
     if (bandera) {
         validacion++
@@ -103,7 +107,7 @@ function validacionProducto(nombre, costo, venta, cantidad) {
 }
 function agregarProducto(evento) {
     evento.preventDefault();
-    let id = productos.length + 1;
+    let id = products.length + 1;
     let nombre = inName.value;
     let precioVenta = inVenta.value;
     let precioCompra = inCosto.value;
@@ -111,7 +115,7 @@ function agregarProducto(evento) {
     let descripcion = inDescripcion.value;
 
     let productoValidado = validacionProducto(nombre, precioCompra, precioVenta, cantidad)
-    let existeProducto = productos.some((producto) => producto.nombre == nombre.toLowerCase())
+    let existeProducto = products.some((producto) => producto.nombre == nombre.toLowerCase())
 
 
     if (productoValidado > 0) {
@@ -135,51 +139,54 @@ function agregarProducto(evento) {
 
 
     formularioCarga.reset()
-    mostrarStock()
+    consultaApi();
 
 
 }
 
 
-function mostrarStock() {
-    const product = []
-    for (let index = 0; index < productos.length; index++) {
-        const product = ;
-        
-    }
-    muestraStock.innerHTML = "";
+async function mostrarStock(productos) {
 
+    muestraStock.innerHTML = "";
+    
     productos.forEach((producto) => {
         console.log(producto.nombre);
         let column = document.createElement("div");
         column.className = "col-md-4 mt-3 ";
         column.id = `columna-${producto.id}`;
         column.innerHTML = `
-      <div class="card h-100 shadow-sm mb-5">
+        <div class="card h-100 shadow-sm mb-3">
         <div class="card-body">
-            <div class="card-body"> <div class="clearfix mb-3"> 
-                <span class="float-start badge rounded-pill bg-primary fs-5" style = "width: 10rem ;">${producto.nombre}</span>
-                <span class="float-end price-product">Precio de venta :${producto.precioVenta}</span>
-            </div> 
-                <h5 class="card-title"> Precio de costo : ${producto.precioCompra} <br> Descripcion :${producto.descripcion}
-                <br> #IdProduct : ${producto.id} 
-                </h5> 
-            <div class="align-items-center">       
-            <button type="button" class="btn btn-outline-danger btn-sm" id="eliminarCard-${producto.id}">Eliminar</button>
-            </div>              
-        </div>
-        
-      </div>`;
-        console.log("deberia mostrar");
-        muestraStock.append(column);
-        let eliminarCard = document.getElementById(`eliminarCard-${producto.id}`)
-        eliminarCard.onclick = () => confirmarEliminacion(producto.id)
-    });
+            <div class="card-body">
+                <div class="clearfix mb-3"> 
+                 
+                <span class="float-start badge rounded-pill bg-info fs-5" style = "width: 20rem ;">${producto.nombre}</span>
+                
+                 </div> 
+                <h5 class="card-title">
+               Cantidad disponible :${producto.cantidad}             
+                <br>
+                Precio de costo :${producto.precioCompra} <br>Precio de venta :${producto.precioVenta}</h5>
+                <h5 class="card-title">
+                #ID: ${producto.id}
+                </h5>
+                Descripcion :${producto.descripcion} 
+                
+                <div class="align-center">       
+                <button type="button" class="btn btn-outline-danger btn-sm" id="eliminarCard-${producto.id}">Eliminar</button>
+                </div>              
+                </div>
+                
+                </div>`;
 
-
-}
-function confirmarEliminacion(idProducto) {
-    Swal.fire({
+                console.log("deberia mostrar");
+                muestraStock.append(column);
+                let eliminarCard = document.getElementById(`eliminarCard-${producto.id}`)
+                eliminarCard.onclick = () => confirmarEliminacion(producto.id)
+            });
+        }
+        function confirmarEliminacion(idProducto) {
+            Swal.fire({
 
         icon: "warning",
         title: '¿Quieres eliminar producto?',
@@ -189,18 +196,25 @@ function confirmarEliminacion(idProducto) {
         denyButtonText: 'Cancelar',
     }).then((result) => {
         if (result.isConfirmed) {
-            eliminarProducto(idProducto);
+            removeProduct(idProducto);
         } else if (result.isDenied) {
             Swal.fire('Eliminacion cancelada')
         }
     })
 }
-function eliminarProducto(id) {
-    let borrarCard = document.getElementById(`columna-${id}`)
-    let productoABorrar = productos.findIndex((producto) => Number(producto.id) === Number(id))
 
-    productos.slice(productoABorrar, 1)
-    borrarCard.remove();
+async function removeProduct(id){
+    await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto/"+`${id}`,
+    {
+        method: 'DELETE',
+    })
+    .then(res => res.json)
+    .then(res =>{
+        generarAlertError("Producto elimanado exitosamente", success)
+        consultaApi();
+    })
+    .catch(err => generarAlertError(err, error))
+    
 }
 
 function generarAlertError(mensaje, tipo) {
@@ -211,7 +225,7 @@ function generarAlertError(mensaje, tipo) {
             icon: "error",
             title: mensaje,
             width: "25%",
-            time : 3000
+            time : 1500
         });
     
      tipo =="success" &&   
@@ -219,7 +233,7 @@ function generarAlertError(mensaje, tipo) {
             icon: "success",
             title: mensaje,
             width: "25%",
-            time : 3000
+            time : 1500
         })
 
     
@@ -244,21 +258,14 @@ function buscarProducto(productos) {
 
 }
 async function consultaApi() {
-    let product = [];
-
-    try {
-        const response = await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")//El await hace que espere hasta que llegue esa respuesta
-        const data = await response.json();
-        
-       
-        productos= [...data]
-        console.log(productos);
-       
-    } catch (errorApi) {
-        generarAlertError(errorApi, error);
-        console.log(errorApi);
-    }
-}
+    fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")
+    .then((res) => res.json())
+    .then((productosResponse) => {
+        products = productosResponse
+        mostrarStock(productosResponse) 
+    })
+    .catch( err => generarAlertError(err, error))
+};
 
 async function addProductApi(productJson){
     try {
@@ -272,21 +279,21 @@ async function addProductApi(productJson){
           })//El await hace que espere hasta que llegue esa respuesta
         if(response.ok){
             generarAlertError("Producto agregado exitosamente", success)
+            consultaApi();
         }
         
     } catch (errorApi) {
         generarAlertError(errorApi, error);
     }
-
-
 } 
+
 
 function main() {
 
     initElementos(); //Se inicializan los elementos
     initAccion();//La acciones con la que vamos a manipular lo elementos
     consultaApi();
-   mostrarStock();
+    // mostrarStock();
 
 }
 
