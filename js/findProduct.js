@@ -133,13 +133,10 @@ async function buscarPorNombre(eventoX) {
        console.log(products);
         if (products.length > 0) {
             console.log("filtra");
-            resultado = products.filter((producto) => producto.nombre == nombreBuscado);
-            if (resultado.length > 0) {
-                mostrarProductos(resultado);
-            } else {
-                generarAlertError("No se encontraron productos con ese nombre", "error")
-            }
-        }
+            resultado = products.inclues(nombreBuscado);
+            // resultado= products.map((producto)=> producto.nombre.includes(nombreBuscado) )
+            resultado.length > 0 ? mostrarProductos(resultado) : generarAlert("No se encontraron productos con ese nombre", "error");
+            }        
     } else {
         muestraResultado.innerHTML = "";
         let column = document.createElement("div");
@@ -160,10 +157,10 @@ async function consultaApi() {
         products = productosResponse
         console.log(products);
     })
-    .catch( err => generarAlertError(err, error))
+    .catch( err => generarAlert(err, error))
 };
 
-function generarAlertError(mensaje, tipo) {
+function generarAlert(mensaje, tipo) {
 
     tipo =="error" &&
      (tipo == "error") 

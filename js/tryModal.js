@@ -114,17 +114,17 @@ function agregarProducto(evento) {
     let cantidad = inCantidad.value;
     let descripcion = inDescripcion.value;
 
-    let productoValidado = validacionProducto(nombre.toLowerCase(), precioCompra, precioVenta, cantidad)
+    let productoValidado = validacionProducto(nombre, precioCompra, precioVenta, cantidad)
     let existeProducto = products.some((producto) => producto.nombre == nombre.toLowerCase())
 
 
     if (productoValidado > 0) {
         let mensaje = "Datos ingresados invalidos vuelva a cargar el producto"
-        generarAlert(mensaje, error);
+        generarAlertError(mensaje, error);
 
     } else if (existeProducto) {
         let mensaje = "Ya existe un producto registrado con ese nombre"
-        generarAlert(mensaje, error);
+        generarAlertError(mensaje, error);
 
     } else {
         if (descripcion == null || descripcion == "") {
@@ -210,14 +210,14 @@ async function removeProduct(id){
     })
     .then(res => res.json)
     .then(res =>{
-        generarAlert("Producto elimanado exitosamente", success)
+        generarAlertError("Producto elimanado exitosamente", success)
         consultaApi();
     })
-    .catch(err => generarAlert(err, error))
+    .catch(err => generarAlertError(err, error))
     
 }
 
-function generarAlert(mensaje, tipo) {
+function generarAlertError(mensaje, tipo) {
 
     tipo =="error" &&
      (tipo == "error") 
@@ -264,7 +264,7 @@ async function consultaApi() {
         products = productosResponse
         mostrarStock(productosResponse) 
     })
-    .catch( err => generarAlert(err, error))
+    .catch( err => generarAlertError(err, error))
 };
 
 async function addProductApi(productJson){
@@ -278,12 +278,12 @@ async function addProductApi(productJson){
             body: productJson
           })//El await hace que espere hasta que llegue esa respuesta
         if(response.ok){
-            generarAlert("Producto agregado exitosamente", success)
+            generarAlertError("Producto agregado exitosamente", success)
             consultaApi();
         }
         
     } catch (errorApi) {
-        generarAlert(errorApi, error);
+        generarAlertError(errorApi, error);
     }
 } 
 

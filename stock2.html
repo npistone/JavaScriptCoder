@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="Stylesheet" href="static/css/login.css">
+    <link rel="Stylesheet" href="static/css/allConfig.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
@@ -38,44 +38,19 @@
                     <li class="nav-item">
                         <a class="nav-link" href="busqueda.html">Buscador</a>
                     </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Sing in
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="registroUsuario.html">New User</a></li>
-                            <li><a class="dropdown-item" href="login.html">Login</a></li>
-                        </ul>
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="busqueda.html">Presupuesto</a>
                     </li>
+
                 </ul>
             </div>
         </div>
     </nav>
+    <div id="conditionaLogin">
 
-    <section class="login-form">
-        <img src="static/images/inicioSesion.png">
-        <h style="color: rgba(26, 47, 236, 0.897); margin-left: 40px;">
-            <strong>Inicio de sesion </strong>
-        </h>
-        <form id="loginUser">
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" id="loginMail" placeholder="mail@mail.com" required />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-control" id="loginPassword" placeholder="Password"
-                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required />
-            </div>
+    </div>
 
-            <button class="btn btn-primary regular-button" type="submit" style="margin:15px;">Login</button>
-        </form>
-    </section>
-
-    <footer class="d-flex flex-wrap justify-content-between align-items-center mt-5 border-top fixed-bottom">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center mt-5 border-top ">
         <div class="col-md-4 d-flex align-items-center">
             <span class="text-muted">© 2022 End Point ◉ </span>
         </div>
@@ -93,7 +68,8 @@
         crossorigin="anonymous"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script src="js/registroUsuario.js"></script>
+   
+    <script src="js/conditionalLogin.js"></script>
 
 
 </body>
