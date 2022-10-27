@@ -4,7 +4,10 @@ let nombreABuscar;
 let muestraResultado;
 let formPrecios;
 let formNombre;
-let products = {}
+let formCarrito;
+let carritoProducto;
+let carritoProductoCantidad;
+let carrito = [];
 
 
 
@@ -16,6 +19,12 @@ function initEventos() {
     precioMax = document.getElementById("precioMax")
     nombreABuscar = document.getElementById("nombreABuscar")
     muestraResultado = document.getElementById("muestra_Resultado")
+
+}
+function initAcciones() {
+    formPrecios.onsubmit = (evento) => buscarPorPrecios(evento);
+    formNombre.onsubmit = (eventoX) => buscarPorNombre(eventoX);
+
 }
 
 function validarPrecios(min, max) {
@@ -34,10 +43,7 @@ function validarString(palabra) {
     return bandera
 }
 
-function initAcciones() {
-    formPrecios.onsubmit = (evento) => buscarPorPrecios(evento);
-    formNombre.onsubmit = (eventoX) => buscarPorNombre(eventoX);
-}
+
 function getProductosStorage() {
     let productos = [];
     let productosJSON = localStorage.getItem("productos")//Buscamos en localStorage si hay productos guardados
@@ -55,22 +61,27 @@ function mostrarProductos(productos) {
         column.className = "col-md-4 mt-3 ";
         column.id = `columna-${producto.id}`;
         column.innerHTML = `
-      <div class="card h-100 shadow-sm mb-5">
+        <div class="card h-100 shadow-sm mb-3">
         <div class="card-body">
-            <div class="card-body"> <div class="clearfix mb-3"> 
-                <span class="float-start badge rounded-pill bg-primary fs-5" style = "width: 10rem ;">${producto.nombre}</span>
-                <span class="float-end price-product">Precio de venta :${producto.precioVenta}</span>
-            </div> 
-                <h5 class="card-title"> Precio de costo : ${producto.precioCompra} <br> Descripcion :${producto.descripcion}
-                <br> #IdProduct : ${producto.id} 
-                </h5> 
-            <form class="addCarrito">
-                <div class="mb-2">
-                    <label class="form-label">Cantidad</label>
-                     <input type="number" class="form-control form-control-sm" id="addQuantity" required />
-                 </div>
-                 <input type="hidden" id="addProductId" name="articuloId" value=${producto.id}  />
-                <button type="submit" class="btn btn-outline-danger btn-sm">Agregar al carrito</button>
+            <div class="card-body">
+                <div class="clearfix mb-3"> 
+                 
+                    <span class="float-start badge rounded-pill bg-info fs-5" style = "width: 20rem ;">${producto.nombre}</span>
+                
+                 </div> 
+                 <div>
+                    <h5 class="card-title">
+                    Cantidad disponible :${producto.cantidad}             
+                    <br>Precio de venta :${producto.precioVenta}</h5>
+                </div>
+
+                    Descripcion :${producto.descripcion}  
+                    <div class="container d-flex align-items-center justify-content-center mt-5">
+                        <div>
+                        <button type="button" class="btn btn-success btn-sm" id="addProduct-${producto.id}" >Agregar al presupuesto</button>
+                        </div>
+                    </div>
+                
                   
             </form>              
         </div>
@@ -78,8 +89,21 @@ function mostrarProductos(productos) {
       </div>`;
 
         muestraResultado.append(column);
+        let agregarCarrito = document.getElementById(`addProduct-${producto.id}`)
+        agregarCarrito.onclick = () => agregarCarritoProd(producto);
     });
 
+}
+
+function agregarCarritoProd(producto) {
+
+    let existente = carrito.some((product) => product.nombre == producto.nombre)
+    if (existente) {
+        generarAlert("El producto ya se encuentra en el carrito", "error")
+    } else {
+        carrito.push(producto);
+        generarAlert(producto.nombre + " agrega correctamente", "success")
+    }
 
 }
 
@@ -89,37 +113,11 @@ async function buscarPorPrecios(evento) {
     let maximo = precioMax.value;
     let validacion = validarPrecios(minimo, maximo);
     let productosStorage;
-    let resultado = [];
 
-    if (validacion) {
-        productosStorage = consultaApi();
 
-        if (productosStorage.length > 0) {
-            resultado = productosStorage.filter((producto) => producto.precioVenta <= maximo && producto.precioVenta >= minimo);
-            if (resultado.length > 0) {
-                mostrarProductos(resultado);
-            } else {
-                console.log("no encuentra producto");
-                muestraResultado.innerHTML = "";
-                let column = document.createElement("div");
-                column.className = "col-md-3 mt-3 text-center";
-                column.innerHTML = `
-                <div class="mb-3">
-                <p class="text-danger fs-4"> No existen productos dentro del rango ingresado</p>
-                </div>`;
-                muestraResultado.append(column);
-            }
-        }
-    } else {
-        muestraResultado.innerHTML = "";
-        let column = document.createElement("div");
-        column.className = "col-md-3 mt-3 ";
-        column.innerHTML = `
-        <div class="mb-3">
-        <p class="text-danger fs-4"> El precio minimo no puede ser mayor que el máximo</p>
-        </div>`;
-        muestraResultado.append(column);
-    }
+    validacion ? consultaApiPorPrecio(minimo, maximo) : generarAlert("Parametros de busqueda errorenes", error)
+
+
     formPrecios.reset();
 }
 
@@ -127,63 +125,76 @@ async function buscarPorNombre(eventoX) {
     console.log("entra");
     eventoX.preventDefault();
     let nombreBuscado = nombreABuscar.value;
+    nombreBuscado = nombreBuscado.toLowerCase();
     let resultado = [];
 
     if (validarString(nombreBuscado)) {
-       console.log(products);
-        if (products.length > 0) {
-            console.log("filtra");
-            resultado = products.inclues(nombreBuscado);
-            // resultado= products.map((producto)=> producto.nombre.includes(nombreBuscado) )
-            resultado.length > 0 ? mostrarProductos(resultado) : generarAlert("No se encontraron productos con ese nombre", "error");
-            }        
+
+        consultaApiPorNombre(nombreBuscado)
     } else {
-        muestraResultado.innerHTML = "";
-        let column = document.createElement("div");
-        column.className = "col-md-3 mt-3 ";
-        column.innerHTML = `
-        <div class="mb-3">
-        <p class="text-danger fs-4"> El valor ingresado no es válido</p>
-        </div>`;
-        muestraResultado.append(column);
+        generarAlert("El nombre ingresado no es válido", "error")
     }
+
     formNombre.reset();
 }
 
-async function consultaApi() {
-    fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")
-    .then((res) => res.json())
-    .then((productosResponse) => {
-        products = productosResponse
-        console.log(products);
-    })
-    .catch( err => generarAlert(err, error))
+
+async function consultaApiPorNombre(nombre) {
+    await fetch(`https://6345f26639ca915a690abd6b.mockapi.io/app/producto?filter=${nombre}`)//Utilidad de filtrado de MockApi
+        .then((res) => res.json())
+        .then((productosResponse) => {
+            if (productosResponse == null || productosResponse.length == 0) {
+                generarAlert("No existen productos con ese nombre", "error")
+            } else {
+                mostrarProductos(productosResponse);
+            }
+
+        })
+        .catch(err => generarAlert(err, "error"))
 };
+
+async function consultaApiPorPrecio(min, max) {
+    await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")
+        .then((res) => res.json())
+        .then((productosResponse) => {
+            let resultado = []
+
+            if (productosResponse == null || productosResponse.length == 0) {
+                generarAlert("No existen productos en ese rango de precios", "error")
+            } else {
+                resultado = productosResponse.filter((producto) => producto.precioVenta <= max && producto.precioVenta >= min);
+                mostrarProductos(resultado);
+            }
+
+        })
+        .catch((err) => generarAlert(err, "error"))
+};
+
+
 
 function generarAlert(mensaje, tipo) {
 
-    tipo =="error" &&
-     (tipo == "error") 
-        Swal.fire({
-            icon: "error",
-            title: mensaje,
-            width: "25%",
-            time : 1500
-        });
-    
-     tipo =="success" &&   
+    tipo == "error" &&
+        (tipo == "error")
+    Swal.fire({
+        icon: "error",
+        title: mensaje,
+        width: "25%",
+        timer: 1500
+    });
+
+    tipo == "success" &&
         Swal.fire({
             icon: "success",
             title: mensaje,
             width: "25%",
-            time : 1500
+            timer: 1500
         })
 
-    
+
 }
 function main() {
     initEventos();
     initAcciones();
-    consultaApi();
 }
 main()

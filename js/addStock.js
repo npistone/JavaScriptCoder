@@ -51,7 +51,7 @@ function initAccion() {
 
 function validarString(palabra) {
     let bandera = false
-    if (palabra === null || palabra.replace(/\s/g,"") == "" ) {
+    if (palabra === null || palabra.replace(/\s/g, "") == "") {
         bandera = true
     }
 
@@ -92,7 +92,7 @@ function validacionProducto(nombre, costo, venta, cantidad) {
         bandera = false
     }
 
-    if(costo>venta){
+    if (costo > venta) {
         validacion++
     }
 
@@ -132,7 +132,7 @@ function agregarProducto(evento) {
         }
 
         let productoARegistrar = new Producto(id, nombre, precioCompra, precioVenta, cantidad, descripcion);
-        let tranformarJson = JSON.stringify(productoARegistrar);    
+        let tranformarJson = JSON.stringify(productoARegistrar);
         addProductApi(tranformarJson);
 
     }
@@ -148,7 +148,7 @@ function agregarProducto(evento) {
 async function mostrarStock(productos) {
 
     muestraStock.innerHTML = "";
-    
+
     productos.forEach((producto) => {
         console.log(producto.nombre);
         let column = document.createElement("div");
@@ -179,14 +179,13 @@ async function mostrarStock(productos) {
                 
                 </div>`;
 
-                console.log("deberia mostrar");
-                muestraStock.append(column);
-                let eliminarCard = document.getElementById(`eliminarCard-${producto.id}`)
-                eliminarCard.onclick = () => confirmarEliminacion(producto.id)
-            });
-        }
-        function confirmarEliminacion(idProducto) {
-            Swal.fire({
+        muestraStock.append(column);
+        let eliminarCard = document.getElementById(`eliminarCard-${producto.id}`)
+        eliminarCard.onclick = () => confirmarEliminacion(producto.id)
+    });
+}
+function confirmarEliminacion(idProducto) {
+    Swal.fire({
 
         icon: "warning",
         title: '¿Quieres eliminar producto?',
@@ -203,40 +202,40 @@ async function mostrarStock(productos) {
     })
 }
 
-async function removeProduct(id){
-    await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto/"+`${id}`,
-    {
-        method: 'DELETE',
-    })
-    .then(res => res.json)
-    .then(res =>{
-        generarAlert("Producto elimanado exitosamente", success)
-        consultaApi();
-    })
-    .catch(err => generarAlert(err, error))
-    
+async function removeProduct(id) {
+    await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto/" + `${id}`,
+        {
+            method: 'DELETE',
+        })
+        .then(res => res.json)
+        .then(res => {
+            generarAlert("Producto elimanado exitosamente", success)
+            consultaApi();
+        })
+        .catch(err => generarAlert(err, error))
+
 }
 
 function generarAlert(mensaje, tipo) {
 
-    tipo =="error" &&
-     (tipo == "error") 
-        Swal.fire({
-            icon: "error",
-            title: mensaje,
-            width: "25%",
-            time : 1500
-        });
-    
-     tipo =="success" &&   
+    tipo == "error" &&
+        (tipo == "error")
+    Swal.fire({
+        icon: "error",
+        title: mensaje,
+        width: "25%",
+        timer: 1500
+    });
+
+    tipo == "success" &&
         Swal.fire({
             icon: "success",
             title: mensaje,
             width: "25%",
-            time : 1500
+            timer: 1500
         })
 
-    
+
 }
 
 
@@ -259,33 +258,33 @@ function buscarProducto(productos) {
 }
 async function consultaApi() {
     fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")
-    .then((res) => res.json())
-    .then((productosResponse) => {
-        products = productosResponse
-        mostrarStock(productosResponse) 
-    })
-    .catch( err => generarAlert(err, error))
+        .then((res) => res.json())
+        .then((productosResponse) => {
+            products = productosResponse
+            mostrarStock(productosResponse)
+        })
+        .catch(err => generarAlert(err, error))
 };
 
-async function addProductApi(productJson){
+async function addProductApi(productJson) {
     try {
         const response = await fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto",
-        {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: productJson
-          })//El await hace que espere hasta que llegue esa respuesta
-        if(response.ok){
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: productJson
+            })//El await hace que espere hasta que llegue esa respuesta
+        if (response.ok) {
             generarAlert("Producto agregado exitosamente", success)
             consultaApi();
         }
-        
+
     } catch (errorApi) {
         generarAlert(errorApi, error);
     }
-} 
+}
 
 
 function main() {
