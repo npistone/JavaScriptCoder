@@ -7,8 +7,6 @@ let formNombre;
 let formCarrito;
 let carritoProducto;
 let carritoProductoCantidad;
-let carrito = [] ;
-let carritoJson = JSON.stringify(carrito);
 let showCarrito;
 
 
@@ -22,7 +20,6 @@ function initEventos() {
     nombreABuscar = document.getElementById("nombreABuscar")
     muestraResultado = document.getElementById("muestra_Resultado")
     showCarrito = document.getElementById("mostrarCarrito")
-    sessionStorage.setItem("carritoCompras", carritoJson)
 }
 function initAcciones() {
     formPrecios.onsubmit = (evento) => buscarPorPrecios(evento);
@@ -47,13 +44,19 @@ function validarString(palabra) {
 }
 
 
-function getProductosStorage() {
-    let productos = [];
-    let productosJSON = localStorage.getItem("productos")//Buscamos en localStorage si hay productos guardados
-    if (productosJSON) {
-        productos = JSON.parse(productosJSON)
+
+function buscarSessionStorage() {
+    let array = []
+    let carritoVacio = JSON.stringify(array)
+    let buscaStorage = sessionStorage.getItem("carritoCompras");
+
+    if (buscaStorage == null || buscaStorage.length == 0) {
+        sessionStorage.setItem("carritoCompras", carritoVacio)
+    } else {
+        let carritoJson = JSON.parse(buscaStorage)
+        insertarCarrito(carritoJson);
     }
-    return productos
+
 }
 function mostrarProductos(productos) {
 
@@ -112,32 +115,59 @@ function agregarCarritoProd(producto) {
         generarAlert(producto.nombre + " agrega correctamente", "success")
         insertarCarrito(carrito)
         carritoJson = JSON.stringify(carrito);
-        sessionStorage.setItem("carritoCompras",carritoJson)
+        sessionStorage.setItem("carritoCompras", carritoJson)
 
     }
 
 }
 
-function insertarCarrito(productos){
-    showCarrito.innerHTML="";
+function insertarCarrito(productos) {
+    showCarrito.innerHTML = "";
 
     productos.forEach((producto) => {
         const row = document.createElement('tr');
+        row.id = `row-${producto.id}`
         row.innerHTML = `
             <td>${producto.id}</td>
             <td>${producto.nombre}</td>
             <td>${producto.precioVenta}</td>
             <td>
-            <input id="cantidadComprada" type="number" placeholder="Cantidad" min=0 required>
+            <input id="cantidadComprada-${producto.id}" type="number" placeholder="Cantidad" min=0 required>
             </td>
+            <td>
+            <button type="button" class="btn btn-success btn-sm" id="confirm-Cantidad-${producto.id}">Agregar</button>
             </td>
+            <td>
+            <button type="button" class="btn btn-danger btn-sm" id="remove-${producto.id}">Eliminar</button>
+            </td>
+            
         `;
         showCarrito.append(row);
-        
+        let cantComprada = document.getElementById(`cantidadComprada-${producto.id}`)
+        let botonAgregar = document.getElementById(`confirm-Cantidad-${producto.id}`)
+        let eliminarProd = document.getElementById(`remove-${producto.id}`)
+        eliminarProd.onclick = () => eliminarProductoCarrito(`${producto.id}`)
     });
 
 
 }
+
+function eliminarProductoCarrito(idProducto) {
+
+    let eliminarRow = document.getElementById(`row-${idProducto}`);
+    let productosJSON = sessionStorage.getItem("carritoCompras")
+    let productos =JSON.parse(productosJSON)
+    
+    let idProdABorrar = productos.findIndex((producto) => (producto.id.toString()) == (idProducto))
+    productos.splice(idProdABorrar, 1);
+    eliminarRow.remove();
+
+    generarAlert("Producto eliminado", "success")
+    let carritoUpdate =JSON.stringify(productos);
+    sessionStorage.setItem("carritoCompras", carritoUpdate)
+
+}
+
 
 
 async function buscarPorPrecios(evento) {
@@ -227,7 +257,9 @@ function generarAlert(mensaje, tipo) {
 
 }
 function main() {
+
     initEventos();
     initAcciones();
+    buscarSessionStorage();
 }
 main()

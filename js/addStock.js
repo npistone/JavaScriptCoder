@@ -239,23 +239,6 @@ function generarAlert(mensaje, tipo) {
 }
 
 
-function buscarProducto(productos) {
-    let productoABuscar = prompt("Ingrese el nombre de producto a buscar").toLowerCase()
-    let validado = validarString(productoABuscar)
-    if (validado) {
-        alert("El valor ingresado no es valido")
-    } else {
-        let buscarPorNombre = productos.filter((producto) => producto.nombre === productoABuscar)
-        if (buscarPorNombre.length == 0) {
-            alert("No se encontro ningun producto con ese nombre")
-        } else {
-            for (const producto of buscarPorNombre) {
-                alert(producto.id + "- " + producto.nombre.toUpperCase() + " [stock: " + producto.cantidad + "]" + " Precio de venta : $" + producto.precioVenta)
-            }
-        }
-    }
-
-}
 async function consultaApi() {
     fetch("https://6345f26639ca915a690abd6b.mockapi.io/app/producto")
         .then((res) => res.json())
