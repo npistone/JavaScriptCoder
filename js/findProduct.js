@@ -7,7 +7,9 @@ let formNombre;
 let formCarrito;
 let carritoProducto;
 let carritoProductoCantidad;
-let carrito = [];
+let carrito = [] ;
+let carritoJson = JSON.stringify(carrito);
+let showCarrito;
 
 
 
@@ -19,7 +21,8 @@ function initEventos() {
     precioMax = document.getElementById("precioMax")
     nombreABuscar = document.getElementById("nombreABuscar")
     muestraResultado = document.getElementById("muestra_Resultado")
-
+    showCarrito = document.getElementById("mostrarCarrito")
+    sessionStorage.setItem("carritoCompras", carritoJson)
 }
 function initAcciones() {
     formPrecios.onsubmit = (evento) => buscarPorPrecios(evento);
@@ -64,29 +67,30 @@ function mostrarProductos(productos) {
         <div class="card h-100 shadow-sm mb-3">
         <div class="card-body">
             <div class="card-body">
-                <div class="clearfix mb-3"> 
-                 
-                    <span class="float-start badge rounded-pill bg-info fs-5" style = "width: 20rem ;">${producto.nombre}</span>
-                
-                 </div> 
-                 <div>
+                <div class="clearfix mb-3">
+
+                    <span class="float-start badge rounded-pill bg-info fs-5"
+                        style="width: 20rem ;">${producto.nombre}</span>
+
+                </div>
+                <div>
                     <h5 class="card-title">
-                    Cantidad disponible :${producto.cantidad}             
-                    <br>Precio de venta :${producto.precioVenta}</h5>
+                        Cantidad disponible :${producto.cantidad}
+                        <br>Precio de venta :${producto.precioVenta}
+                    </h5>
                 </div>
 
-                    Descripcion :${producto.descripcion}  
-                    <div class="container d-flex align-items-center justify-content-center mt-5">
-                        <div>
-                        <button type="button" class="btn btn-success btn-sm" id="addProduct-${producto.id}" >Agregar al presupuesto</button>
-                        </div>
+                Descripcion :${producto.descripcion}
+                <div class="container d-flex align-items-center justify-content-center mt-5">
+                    <div>
+                        <button type="button" class="btn btn-success btn-sm" id="addProduct-${producto.id}">Agregar al
+                            presupuesto</button>
                     </div>
-                
-                  
-            </form>              
-        </div>
-        
-      </div>`;
+                </div>
+
+            </div>
+
+        </div>`;
 
         muestraResultado.append(column);
         let agregarCarrito = document.getElementById(`addProduct-${producto.id}`)
@@ -96,16 +100,45 @@ function mostrarProductos(productos) {
 }
 
 function agregarCarritoProd(producto) {
+    let carritoToJson;
+    let getJson = sessionStorage.getItem("carritoCompras")
 
+    let carrito = JSON.parse(getJson)
     let existente = carrito.some((product) => product.nombre == producto.nombre)
     if (existente) {
         generarAlert("El producto ya se encuentra en el carrito", "error")
     } else {
         carrito.push(producto);
         generarAlert(producto.nombre + " agrega correctamente", "success")
+        insertarCarrito(carrito)
+        carritoJson = JSON.stringify(carrito);
+        sessionStorage.setItem("carritoCompras",carritoJson)
+
     }
 
 }
+
+function insertarCarrito(productos){
+    showCarrito.innerHTML="";
+
+    productos.forEach((producto) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${producto.id}</td>
+            <td>${producto.nombre}</td>
+            <td>${producto.precioVenta}</td>
+            <td>
+            <input id="cantidadComprada" type="number" placeholder="Cantidad" min=0 required>
+            </td>
+            </td>
+        `;
+        showCarrito.append(row);
+        
+    });
+
+
+}
+
 
 async function buscarPorPrecios(evento) {
     evento.preventDefault();
