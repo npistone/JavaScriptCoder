@@ -43,6 +43,11 @@ function validarString(palabra) {
     return bandera
 }
 
+function actualizarCarritoStorage(arrayUpdate){
+
+    let transformarAJson = JSON.stringify(arrayUpdate);
+    sessionStorage.setItem("carritoCompras", transformarAJson)
+}
 
 
 function buscarSessionStorage() {
@@ -114,8 +119,7 @@ function agregarCarritoProd(producto) {
         carrito.push(producto);
         generarAlert(producto.nombre + " agrega correctamente", "success")
         insertarCarrito(carrito)
-        carritoJson = JSON.stringify(carrito);
-        sessionStorage.setItem("carritoCompras", carritoJson)
+        actualizarCarritoStorage(carrito)
 
     }
 
@@ -143,10 +147,11 @@ function insertarCarrito(productos) {
             
         `;
         showCarrito.append(row);
-        let cantComprada = document.getElementById(`cantidadComprada-${producto.id}`)
+
         let botonAgregar = document.getElementById(`confirm-Cantidad-${producto.id}`)
         let eliminarProd = document.getElementById(`remove-${producto.id}`)
         eliminarProd.onclick = () => eliminarProductoCarrito(`${producto.id}`)
+        botonAgregar.onclick= () => agregarCantidadPresupuesto(`${producto.id}`)
     });
 
 
@@ -157,14 +162,39 @@ function eliminarProductoCarrito(idProducto) {
     let eliminarRow = document.getElementById(`row-${idProducto}`);
     let productosJSON = sessionStorage.getItem("carritoCompras")
     let productos =JSON.parse(productosJSON)
-    
+
     let idProdABorrar = productos.findIndex((producto) => (producto.id.toString()) == (idProducto))
     productos.splice(idProdABorrar, 1);
     eliminarRow.remove();
 
     generarAlert("Producto eliminado", "success")
-    let carritoUpdate =JSON.stringify(productos);
-    sessionStorage.setItem("carritoCompras", carritoUpdate)
+    actualizarCarritoStorage(productos)
+
+}
+
+function agregarCantidadPresupuesto(idProducto){
+
+    let cantComprada = document.getElementById(`cantidadComprada-${idProducto}`)
+    let cant = cantComprada.value;
+    let transformarCantidad =cant.toString();
+
+    let productosJSON = sessionStorage.getItem("carritoCompras")
+    
+    let productos =JSON.parse(productosJSON)
+    console.log(productos);
+    let indexProducto = productos.findIndex((producto) => (producto.id.toString()) == (idProducto))
+
+    let productoUpdate = {}
+    productoUpdate= productos[indexProducto]
+    productoUpdate.cantidadPresupuesto = transformarCantidad
+
+    productos.splice(indexProducto, 1);
+    productos.push(productoUpdate)
+  
+    generarAlert("Cantidad agregada", "success")
+    actualizarCarritoStorage(productos)
+
+
 
 }
 
