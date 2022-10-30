@@ -1,5 +1,3 @@
-const { jsPDF } = window.jspdf;
-
 let precioMin;
 let precioMax;
 let nombreABuscar;
@@ -7,22 +5,7 @@ let muestraResultado;
 let formPrecios;
 let formNombre;
 let showCarrito;
-let generarPresup;
-let limpiarPresup;
-let presupuesto = [];
-let cerrarSesion;
-
-
-
-class Producto {
-    constructor(id, nombre, precioCompra, precioVenta, cantidad, descripcion) {
-        this.id = id;
-        this.nombre = nombre;
-        this.precioCompra = precioCompra;
-        this.precioVenta = precioVenta;
-        this.cantidad = cantidad;
-        this.descripcion = descripcion;
-    }}
+let carrito = [];
 
 
 function initEventos() {
@@ -34,17 +17,10 @@ function initEventos() {
     nombreABuscar = document.getElementById("nombreABuscar")
     muestraResultado = document.getElementById("muestra_Resultado")
     showCarrito = document.getElementById("mostrarCarrito")
-    generarPresup = document.getElementById("generarPresupuesto")
-    limpiarPresup = document.getElementById("vaciarPresupuesto")
-    cerrarSesion = document.getElementById("loguot")
-
 }
 function initAcciones() {
     formPrecios.onsubmit = (evento) => buscarPorPrecios(evento);
     formNombre.onsubmit = (eventoX) => buscarPorNombre(eventoX);
-    generarPresup.onclick = (eventoY) => finalizarCarrito(eventoY);
-    limpiarPresup.onclick = (eventoZ) => limpiarCarrito(eventoZ);
-    cerrarSesion.onclick = (eventoX)=> cerrarPrograma(eventoX)
 
 }
 
@@ -64,30 +40,25 @@ function validarString(palabra) {
     return bandera
 }
 
+function actualizarCarritoStorage(arrayUpdate) {
+    console.log("ingresa array" + arrayUpdate);
 
-
-function buscarlocalStorage() {
-
-
-    let buscaStorage = localStorage.getItem("carritoCompras");
-    console.log(buscaStorage);
-    if (buscaStorage !=null) {
-        let carritoJson = JSON.parse(buscaStorage)
-        insertarCarrito(carritoJson);
-    }
-
-}
-function cerrarPrograma(evento){
-    localStorage.clear();
-    window.location.replace("/index.html")
-    
+    let transformarAJson = JSON.stringify(arrayUpdate);
+    sessionStorage.setItem("carritoCompras", transformarAJson)
+    console.log("trasnforma Json" + transformarAJson);
 }
 
-function limpiarCarrito(evento){
-    localStorage.removeItem("carritoCompras");    
-    window.location.replace("/busqueda.html")
-    
-}
+
+// function buscarSessionStorage() {
+
+//     let buscaStorage = sessionStorage.getItem("carritoCompras");
+
+//     if (buscaStorage) {
+//         let carritoJson = JSON.parse(buscaStorage)
+//         insertarCarrito(carritoJson);
+//     }
+
+// }
 function mostrarProductos(productos) {
 
     muestraResultado.innerHTML = "";
@@ -134,39 +105,35 @@ function mostrarProductos(productos) {
 
 function agregarCarritoProd(producto) {
 
-    console.log(typeof producto, producto);
+    console.log(typeof producto);
 
-    let getJson = localStorage.getItem('carritoCompras')
-    
+    let getJson = sessionStorage.getItem("carritoCompras")
 
     let carrito = JSON.parse(getJson)
-    console.log(carrito);
     if (carrito == null || carrito.length == 0) {
-        carrito= []
+        carrito = []
         carrito.push(producto);
-       
+        console.log("agrega carrito" + carrito[0]);
         generarAlert(producto.nombre + " agrega correctamente", "success")
         insertarCarrito(carrito)
-
-        console.log("carrito antes de agregar producto "+ carrito[0]);
         let transformarAJson = JSON.stringify(carrito);
-        localStorage.setItem('carritoCompras', transformarAJson)
+        sessionStorage.setItem("carritoCompras", transformarAJson)
     } else {
         let existente = carrito.some((product) => product.nombre == producto.nombre)
         if (existente) {
             generarAlert("El producto ya se encuentra en el carrito", "error")
         } else {
             carrito.push(producto);
-            console.log("agrega carrito" + carrito);
+            console.log("agrega carrito" + carrito[0]);
             generarAlert(producto.nombre + " agrega correctamente", "success")
             insertarCarrito(carrito)
             let transformarAJson = JSON.stringify(carrito);
-            localStorage.setItem('carritoCompras', transformarAJson)
+            sessionStorage.setItem("carritoCompras", transformarAJson)
 
         }
 
     }
-}
+
     function insertarCarrito(productos) {
         showCarrito.innerHTML = "";
 
@@ -202,16 +169,16 @@ function agregarCarritoProd(producto) {
     function eliminarProductoCarrito(idProducto) {
 
         let eliminarRow = document.getElementById(`row-${idProducto}`);
-        let productosJSON = localStorage.getItem('carritoCompras');
-        let productos = JSON.parse(productosJSON);
+        let productosJSON = sessionStorage.getItem("carritoCompras")
+        let productos = JSON.parse(productosJSON)
 
-        let idProdABorrar = productos.findIndex((producto) => (producto.id) == (idProducto))
+        let idProdABorrar = productos.findIndex((producto) => (producto.id.toString()) == (idProducto))
         productos.splice(idProdABorrar, 1);
         eliminarRow.remove();
 
         generarAlert("Producto eliminado", "success")
         let transformarAJson = JSON.stringify(productos);
-        localStorage.setItem('carritoCompras', transformarAJson)
+        sessionStorage.setItem("carritoCompras", transformarAJson)
 
     }
 
@@ -221,16 +188,14 @@ function agregarCarritoProd(producto) {
         let cant = cantComprada.value;
 
 
-        let productosJSON = localStorage.getItem("carritoCompras")
-        let productos = {}
-        productos = JSON.parse(productosJSON)
+        let productosJSON = sessionStorage.getItem("carritoCompras")
 
+        let productos = JSON.parse(productosJSON)
         console.log(productos);
         let indexProducto = productos.findIndex((producto) => (producto.id.toString()) == (idProducto))
 
         let productoUpdate = []
         productoUpdate = productos[indexProducto]
-        console.log(productoUpdate);
         productoUpdate.cantidadPresupuesto = cant
 
         productos.splice(indexProducto, 1);
@@ -238,39 +203,8 @@ function agregarCarritoProd(producto) {
         console.log("produsctosadd " + productos);
         generarAlert("Cantidad agregada", "success")
         let transformarAJson = JSON.stringify(productos);
-        localStorage.setItem("carritoCompras", transformarAJson)
+        sessionStorage.setItem("carritoCompras", transformarAJson)
 
-        console.log("transformacion productos"+ transformarAJson);
-
-
-    }
-    function finalizarCarrito(eventoY){
-
-        let productosJSON = localStorage.getItem("carritoCompras")
-        let productos = JSON.parse(productosJSON)
-        
-        if(productos == null|| productos.length == 0){
-            generarAlert("No hay productos para generar presupuesto", "error")
-        }else{
-            let bandera = false;
-          
-            for (let index = 0; index < productos.length; index++) {
-                if(!("cantidadPresupuesto" in productos[index])){
-                    bandera = true;
-                }           
-            }
-            if(bandera){
-                generarAlert("No ingreso la cantidad en alguno de los productos, vuelva a hacerlo", "error")
-            }else{
-                
-                let calculo = [];
-                calculo =calculoPresupuesto();
-                console.log(calculo);
-                crearPdf(calculo);
-            }
-
-            
-        }
 
     }
 
@@ -362,97 +296,10 @@ function agregarCarritoProd(producto) {
 
 
     }
-
-    function calculoPresupuesto(){
-        let presupuesto = [];
-   
-        let getLocal = localStorage.getItem('carritoCompras')
-    
-        if(getLocal == null ){
-            console.log("presupuesto vacio");
-        }else{
-            let parseCarrito = JSON.parse(getLocal);
-            
-           
-            for (let index = 0; index < parseCarrito.length; index++) {
-                let elemento = {};
-                elemento.nombre = parseCarrito[index].nombre;
-                elemento.cantidad = parseCarrito[index].cantidadPresupuesto
-                elemento.precio = Number(parseCarrito[index].precioVenta) * Number(parseCarrito[index].cantidadPresupuesto)
-                console.log(elemento.precio);
-                presupuesto.push(elemento)            
-            }
-    
-            precioTotal = presupuesto.reduce((acu, presupuesto)=>{
-                return acu + presupuesto.precio
-            },0 )
-            
-            console.log(precioTotal);
-    
-            console.log(presupuesto);
-        
-        }
-
-        return presupuesto
-    
-    }
-
-    function crearPdf( presupuesto ){
-        let titulo = "Presupuesto Tienda End-P◉int ®";
-        let doc = new jsPDF();
-    
-        doc.setFontSize(20);
-        doc.setFont("courier", "normal");
-        doc.text("Presupuesto Tienda End-Point", 10 ,15);
-        doc.setLineWidth(0.5);
-        doc.line(10, 20, 200, 20);
-        
-        doc.setFontSize(14);
-        doc.setFont("courier", "normal");
-        doc.text("Producto", 10 ,30);
-        
-        doc.setFontSize(14);
-        doc.setFont("courier", "normal");
-        doc.text("Cantidad", 80 ,30);
-        
-        doc.setFontSize(14);
-        doc.setFont("courier", "normal");
-        doc.text("Subtotal", 170 ,30);
-    
-        let moverY = 30;
-        for (let index = 0; index < presupuesto.length; index++) {
-            moverY +=10
-            
-            doc.setFontSize(14);
-            doc.setFont("courier", "normal");
-            doc.text(presupuesto[index].nombre , 10 ,moverY);
-            
-            doc.setFontSize(14);
-            doc.setFont("courier", "normal");
-            doc.text(presupuesto[index].cantidad, 80 ,moverY);
-            
-            doc.setFontSize(14);
-            doc.setFont("courier", "normal");
-            doc.text((presupuesto[index].precio).toString(), 170 ,moverY);
-            
-        }
-    
-        doc.line(10, 280, 200, 280);
-        doc.text("Total $", 160, 290 );
-        doc.text(precioTotal.toString(), 180, 290 );
-        let getApellido = localStorage.getItem("userLast")
-        let nombre = "presupuesto-"+getApellido+".pdf"
-        doc.save(nombre)
-    
-    }
-
-
-
     function main() {
 
         initEventos();
         initAcciones();
-        buscarlocalStorage();
+        buscarSessionStorage();
     }
-
     main()

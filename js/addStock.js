@@ -9,6 +9,7 @@ let inDescripcion;
 let products = {};
 let formularioCarga;
 let muestraStock;
+let cerrarSesion;
 const error = "error";
 const success = "success";
 
@@ -43,10 +44,19 @@ function initElementos() {
     inCantidad = document.getElementById("inputCantidad")
     inDescripcion = document.getElementById("inputDescripcion")
     muestraStock = document.getElementById("muestra__Stock")
+    cerrarSesion = document.getElementById("loguot")
+
 }
 
 function initAccion() {
     formularioCarga.onsubmit = (evento) => agregarProducto(evento)
+    cerrarSesion.onclick = (eventoX)=> cerrarPrograma(eventoX)
+}
+
+function cerrarPrograma(evento){
+    localStorage.clear();
+    window.location.replace("/index.html")
+    
 }
 
 function validarString(palabra) {
@@ -133,6 +143,7 @@ function agregarProducto(evento) {
 
         let productoARegistrar = new Producto(id, nombre, precioCompra, precioVenta, cantidad, descripcion);
         let tranformarJson = JSON.stringify(productoARegistrar);
+        console.log(tranformarJson);
         addProductApi(tranformarJson);
 
     }

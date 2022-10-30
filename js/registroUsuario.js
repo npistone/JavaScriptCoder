@@ -15,8 +15,6 @@ class usuario{
         this.telefono = telefono;
         this.mail = mail;
         this.password = password;
-        this.createDate = new Date();
-        this.activeUser = true;
     }
 
     updatePassword = (newPassword) => this.password = newPassword;

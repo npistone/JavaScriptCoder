@@ -56,8 +56,9 @@ async function consultaUsuario(email, password) {
         console.log(password);
         if(usuarioResponse[0].password === password){
             generarAlert("Usuario logueado correctamente", "success")
-            sessionStorage.setItem("userId", usuarioResponse.id)
-            sessionStorage.setItem("login", "true")
+            localStorage.setItem("login", "true")
+            localStorage.setItem("userName", usuarioResponse.nombre)
+            localStorage.setItem("userLast", usuarioResponse.apellido)
             window.location.replace("/stock.html")
         } else{
             generarAlert("Password incorrecto", "error")
